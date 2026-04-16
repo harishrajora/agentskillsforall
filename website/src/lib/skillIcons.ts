@@ -1,0 +1,56 @@
+const SKILL_ICON_SLUGS: Record<string, string> = {
+  "selenium-automation-skill": "selenium",
+  "playwright-automation-skill": "playwright",
+  "cypress-automation-skill": "cypress",
+  "jest-testing-skill": "jest",
+  "pytest-testing-skill": "python",
+  "junit-testing-skill": "junit",
+  "testng-testing-skill": "java",
+  "appium-automation-skill": "appium",
+  "puppeteer-automation-skill": "puppeteer",
+  "mocha-testing-skill": "mocha",
+  "vitest-testing-skill": "vite",
+  "cucumber-automation-skill": "cucumber",
+  "espresso-automation-skill": "android",
+  "flutter-testing-skill": "flutter",
+  "xcuitest-automation-skill": "xcuitest",
+  "detox-automation-skill": "react",
+  "xunit-testing-skill": "xunit",
+  "rspec-testing-skill": "ruby",
+  "nunit-testing-skill": "dotnet",
+  "mstest-testing-skill": "dotnet",
+  "jasmine-testing-skill": "jasmine",
+  "phpunit-testing-skill": "php",
+  "robot-framework-skill": "robotframework",
+  "behat-automation-skill": "behat",
+  "behave-automation-skill": "behave",
+  "capybara-automation-skill": "capybara",
+  "codeception-testing-skill": "codeception",
+  "geb-automation-skill": "geb",
+  "laravel-dusk-skill": "laravel",
+  "lettuce-testing-skill": "python",
+  "nemojs-automation-skill": "nodedotjs",
+  "protractor-automation-skill": "angular",
+  "selenide-automation-skill": "selenide",
+  "serenity-bdd-skill": "java",
+  "smartui-testing-skill": "selenium",
+  "specflow-automation-skill": "dotnet",
+  "testunit-ruby-skill": "ruby",
+  "unittest-testing-skill": "python",
+  "hyperexecute-skill": "hyperexecute",
+  "cicd-pipeline-skill": "github",
+  "test-framework-migration-skill": "git",
+  "webdriverio-automation-skill": "webdriverio",
+  "testcafe-automation-skill": "testcafe",
+  "nightwatchjs-automation-skill": "nightwatch",
+  "karma-testing-skill": "karma",
+  "gauge-automation-skill": "gauge",
+};
+
+const ICON_VERSION = "2";
+
+export function getSkillIconUrl(skillPath: string): string | null {
+  const slug = SKILL_ICON_SLUGS[skillPath];
+  if (!slug) return null;
+  return `/skill-icons/${slug}.svg?v=${ICON_VERSION}`;
+}

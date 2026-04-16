@@ -1,0 +1,98 @@
+/**
+ * Hero: Billing SDK–style hero fold.
+ * Core theme in globals.css (Billing SDK tokens).
+ */
+
+/* Hero fold: Billing SDK reference – container holds bg + content */
+.hero-fold {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Background layer inside rounded container (FractalMaze or gradient fallback) */
+.hero-fold-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(251, 146, 60, 0.08) 0%, transparent 50%);
+  background-color: var(--background);
+}
+.hero-fold-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/skill-icons/updated/FractalMaze.webp");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  filter: blur(1px);
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .hero-fold-bg::before {
+    filter: blur(2px);
+  }
+}
+
+/* Navbar at scroll 0 on home: same background as hero so it’s flush with hero */
+/* Billing SDK headline: crisp white text for readability on hero background; font size via Tailwind on spans */
+.hero-title-billingsdk {
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow:
+    0 0 1px rgba(0, 0, 0, 0.9),
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Code card: Billing SDK – rounded-t-xl, gradient from-white/5 to-white/10, inner dark */
+.hero-code-card {
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+  padding: 2px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+}
+.hero-code-card .install-command-boxes > div {
+  border-radius: 0 0 calc(var(--radius-xl) - 2px) calc(var(--radius-xl) - 2px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  border: none;
+}
+
+/* Billing SDK–style hero headline: large, bold, tight */
+.hero-title-fluid {
+  font-size: clamp(3.25rem, 6vw + 2rem, 5.5rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+}
+
+.hero-title-accent-fluid {
+  font-size: clamp(2rem, 4vw + 1.25rem, 3.5rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
+/* Accent line: plain white (no gradient) */
+.hero-accent {
+  color: #fff;
+}
+.hero-fold .hero-accent {
+  color: #fff;
+}
+
+.hero-accent-warm {
+  color: var(--muted-foreground);
+  transition: color 0.5s ease-out 0.1s;
+}
+
+.hero-title-root[data-colors-loaded] .hero-accent-warm {
+  color: var(--muted-foreground);
+  opacity: 0.95;
+}
+
