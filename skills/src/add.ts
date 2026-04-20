@@ -1546,6 +1546,17 @@ export async function runAdd(args: string[], options: AddOptions = {}): Promise<
     const isSSH = parsed.url.startsWith('git@');
     const lockSource = isSSH ? parsed.url : normalizedSource;
 
+    // Build skillCategories map: { skillName: category }
+    const skillCategories: Record<string, string> = {};
+    for (const skill of selectedSkills) {
+      if (skill.category) {
+        skillCategories[skill.name] = skill.category;
+      }
+    }
+    const skillCategoriesJson = Object.keys(skillCategories).length > 0
+      ? JSON.stringify(skillCategories)
+      : undefined;
+
     // Only track if we have a valid remote source and it's not a private repo
     if (normalizedSource) {
       const ownerRepo = parseOwnerRepo(normalizedSource);
@@ -1562,6 +1573,7 @@ export async function runAdd(args: string[], options: AddOptions = {}): Promise<
             agents: targetAgents.join(','),
             ...(installGlobally && { global: '1' }),
             skillFiles: JSON.stringify(skillFiles),
+            skillCategories: skillCategoriesJson,
           });
         }
       } else {
@@ -1573,6 +1585,7 @@ export async function runAdd(args: string[], options: AddOptions = {}): Promise<
           agents: targetAgents.join(','),
           ...(installGlobally && { global: '1' }),
           skillFiles: JSON.stringify(skillFiles),
+          skillCategories: skillCategoriesJson,
         });
       }
     }

@@ -12,6 +12,8 @@ interface InstallTelemetryData {
   agents: string;
   global?: '1';
   skillFiles?: string; // JSON stringified { skillName: relativePath }
+  /** JSON stringified { skillName: category } */
+  skillCategories?: string;
   /**
    * Source type for different hosts:
    * - 'github': GitHub repository (default, uses raw.githubusercontent.com)

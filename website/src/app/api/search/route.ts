@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
       name: s.name,
       installs: s.installCount,
       source: s.source,
+      category: s.category,
     })),
   });
 }

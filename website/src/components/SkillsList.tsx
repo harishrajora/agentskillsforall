@@ -7,8 +7,18 @@ import { getSkillDisplayName, isHotSkill, toSkillSlug, categoryToSentenceCase } 
 import { SkillLogo } from "./SkillLogo";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const ALL_OPTION_VALUE = "__all__";
+const ALL_CATEGORIES = "__all__";
+
+const PAGE_SIZE = 50;
 
 interface SkillsListProps {
   skills: Skill[];
@@ -19,8 +29,10 @@ interface SkillsListProps {
 export function SkillsList({ skills, categories, languages }: SkillsListProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
+    setPage(1);
     return skills.filter((s) => {
       const matchSearch =
         !search ||
@@ -32,10 +44,14 @@ export function SkillsList({ skills, categories, languages }: SkillsListProps) {
     });
   }, [skills, search, category]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const startIndex = (page - 1) * PAGE_SIZE;
+  const paged = filtered.slice(startIndex, startIndex + PAGE_SIZE);
+
   return (
     <div className="space-y-4">
       {/* Search + filter row */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative w-full max-w-md">
           <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground/60">/</span>
           <Input
@@ -46,34 +62,35 @@ export function SkillsList({ skills, categories, languages }: SkillsListProps) {
             className="pl-7"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setCategory("")}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium uppercase tracking-wider transition-colors ${
-              !category
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            All ({skills.length})
-          </button>
-          {categories.map((c) => {
-            const count = skills.filter((s) => s.category === c).length;
-            return (
-              <button
-                key={c}
-                onClick={() => setCategory(category === c ? "" : c)}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium uppercase tracking-wider transition-colors ${
-                  category === c
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {categoryToSentenceCase(c)} ({count})
-              </button>
-            );
-          })}
-        </div>
+        <Select
+          value={category || ALL_CATEGORIES}
+          onValueChange={(v) => setCategory(v === ALL_CATEGORIES ? "" : v)}
+        >
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder="All categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL_CATEGORIES}>All categories ({skills.length})</SelectItem>
+            {categories.map((c) => {
+              const count = skills.filter((s) => s.category === c).length;
+              return (
+                <SelectItem key={c} value={c}>
+                  {categoryToSentenceCase(c)} ({count})
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Results count + pagination info */}
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>
+          Showing {startIndex + 1}–{Math.min(startIndex + PAGE_SIZE, filtered.length)} of {filtered.length} skill{filtered.length !== 1 ? "s" : ""}
+        </span>
+        {totalPages > 1 && (
+          <span>Page {page} of {totalPages}</span>
+        )}
       </div>
 
       {/* Table header */}
@@ -86,7 +103,7 @@ export function SkillsList({ skills, categories, languages }: SkillsListProps) {
 
       {/* Skill rows */}
       <div className="divide-y divide-border/50">
-        {filtered.map((skill, index) => (
+        {paged.map((skill, index) => (
           <Link
             key={skill.path}
             href={`/skills/${toSkillSlug(skill.path)}`}
@@ -94,7 +111,7 @@ export function SkillsList({ skills, categories, languages }: SkillsListProps) {
           >
             {/* Rank */}
             <span className="w-8 shrink-0 text-right font-mono text-sm text-muted-foreground/60">
-              {index + 1}
+              {startIndex + index + 1}
             </span>
 
             {/* Logo + Name */}
@@ -127,6 +144,41 @@ export function SkillsList({ skills, categories, languages }: SkillsListProps) {
         <p className="py-12 text-center text-muted-foreground">
           No skills found matching your search.
         </p>
+      )}
+
+      {/* Pagination controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-4 border-t border-border">
+          <button
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+            className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          >
+            <ChevronLeft className="size-4" />
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                p === page
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+            className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          >
+            Next
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
       )}
     </div>
   );

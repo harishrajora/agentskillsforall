@@ -33,9 +33,8 @@ export default async function HomePage() {
                 </p>
               </HeroTitle>
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-balance text-white/80 sm:text-lg">
-                Reusable test automation capabilities for AI coding agents. Install
-                with one command and enhance your agent with Selenium, Playwright,
-                Jest, pytest, and 40+ frameworks.
+              A growing library of skills for AI agents. 
+              Install any skill with a single command to extend your agent capabilities across domains — testing, automation, data, web, and more.
               </p>
               <div className="mt-8">
                 <HeroCtaRow />

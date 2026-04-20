@@ -8,6 +8,7 @@ export interface TelemetryEvent {
   global?: string;
   v?: string;
   ci?: string;
+  skillCategories?: string;
   [key: string]: string | undefined;
 }
 
@@ -16,6 +17,7 @@ export interface SkillRecord {
   name: string;
   source: string;
   installCount: number;
+  category?: string;
 }
 
 const events: TelemetryEvent[] = [];
@@ -36,19 +38,34 @@ export function addEvent(params: Record<string, string | undefined>): void {
     global: params.global,
     v: params.v,
     ci: params.ci,
+    skillCategories: params.skillCategories,
     ...params,
   };
   events.push(event);
 
   if (event.event === "install" && event.source && event.skills) {
+    // Parse categories map if provided
+    let categories: Record<string, string> = {};
+    if (event.skillCategories) {
+      try {
+        categories = JSON.parse(event.skillCategories);
+      } catch {
+        // ignore parse errors
+      }
+    }
+
     const skillNames = event.skills.split(",").map((s) => s.trim()).filter(Boolean);
     for (const name of skillNames) {
       const key = skillKey(event.source, name);
+      const category = categories[name] || undefined;
       const existing = skillsMap.get(key);
       if (existing) {
         existing.installCount += 1;
+        if (category && !existing.category) {
+          existing.category = category;
+        }
       } else {
-        skillsMap.set(key, { id: key, name, source: event.source, installCount: 1 });
+        skillsMap.set(key, { id: key, name, source: event.source, installCount: 1, category });
       }
     }
   }

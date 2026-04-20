@@ -15,13 +15,13 @@ async function fetchInstalledSkills(): Promise<Skill[]> {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
     const res = await fetch(`${base}/api/search?q=&limit=100`, { cache: "no-store" });
     if (!res.ok) return [];
-    const data = (await res.json()) as { skills: Array<{ id: string; name: string; source: string; installs: number }> };
+    const data = (await res.json()) as { skills: Array<{ id: string; name: string; source: string; installs: number; category?: string }> };
     return data.skills.map((s) => ({
       name: s.name,
       path: s.name.toLowerCase().replace(/\s+/g, "-"),
       description: `Installed from ${s.source} (${s.installs} install${s.installs !== 1 ? "s" : ""})`,
       languages: [],
-      category: "community",
+      category: s.category || "community",
       files: { skill_md: "" },
       sourceRepo: s.source,
     }));
@@ -61,8 +61,12 @@ export async function getSkillBySlug(slug: string): Promise<Skill | null> {
 }
 
 export async function getCategories(): Promise<string[]> {
-  const index = await getSkillsIndex();
-  return index.categories ?? [];
+  const skills = await getSkills();
+  const set = new Set<string>();
+  for (const s of skills) {
+    if (s.category) set.add(s.category);
+  }
+  return Array.from(set).sort();
 }
 
 export async function getLanguages(): Promise<string[]> {

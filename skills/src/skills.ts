@@ -56,6 +56,7 @@ export async function parseSkillMd(
       path: dirname(skillMdPath),
       rawContent: content,
       metadata: data.metadata,
+      category: typeof data.category === 'string' ? data.category : undefined,
     };
   } catch {
     return null;

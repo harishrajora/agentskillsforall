@@ -54,6 +54,8 @@ export interface Skill {
   /** Name of the plugin this skill belongs to (if any) */
   pluginName?: string;
   metadata?: Record<string, unknown>;
+  /** Skill category from frontmatter (e.g., "e2e-testing", "unit-testing") */
+  category?: string;
 }
 
 export interface AgentConfig {
