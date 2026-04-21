@@ -5,7 +5,7 @@ import { AGENT_PATHS, getSingleSkillCommands, getAllSkillsCommands } from "@/lib
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 
-const HERO_COMMAND = "npx agentskillshub-cli add https://github.com/harishrajora/skills.git"
+const HERO_COMMAND = "npx agentskillshub-cli add <github-repo-link>"
 
 interface InstallCommandBlockProps {
   skillPath?: string;
@@ -29,12 +29,12 @@ export function InstallCommandBlock({ skillPath, variant = "single" }: InstallCo
 
   if (variant === "hero") {
     return (
-      <div className="install-command-boxes w-full min-w-0 max-w-full">
+      <div className="install-command-boxes inline-flex min-w-0 max-w-full mx-auto">
         <div
-          className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 font-mono text-sm transition-all duration-300 hover:-translate-y-0.5 min-w-0 overflow-hidden"
+          className="flex cursor-pointer items-center gap-2 px-4 py-3 font-mono text-sm transition-all duration-300 hover:-translate-y-0.5 min-w-0 overflow-hidden"
           onClick={() => copy("hero", HERO_COMMAND)}
         >
-          <code className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden text-left text-white/90 whitespace-nowrap py-0.5">
+          <code className="min-w-0 overflow-x-auto overflow-y-hidden text-left text-white/90 whitespace-nowrap py-0.5">
             $ {HERO_COMMAND}
           </code>
           <Button

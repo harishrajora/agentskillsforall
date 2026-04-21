@@ -25,9 +25,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </main>
           <footer className="w-full border-t border-border bg-muted/30 py-12 text-center text-sm text-muted-foreground">
             Made with care by{" "}
-            <a href="https://www.agentskillsforall.com/" target="_blank" rel="noopener noreferrer"
+            <a href="https://testmuai.com" target="_blank" rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary underline-offset-4 hover:underline transition-colors duration-200">
-              Agent Skills for All
+              TestMu AI
             </a>
           </footer>
         </div>
