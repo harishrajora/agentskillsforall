@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     params[key] = value;
   });
   if (params.event) {
-    addEvent(params);
+    await addEvent(params);
   }
   return new Response(null, { status: 204 });
 }

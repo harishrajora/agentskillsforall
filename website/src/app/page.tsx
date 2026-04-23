@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { getSkills, getCategories, getLanguages } from "@/lib/skills";
+import { getTotalSkillsCount, getCategoryCounts } from "@/lib/store";
 import { AgentsMarquee } from "@/components/AgentsMarquee";
 import { InstallCommandBlock } from "@/components/InstallCommandBlock";
 import { SkillsList } from "@/components/SkillsList";
@@ -9,11 +10,17 @@ import { HeroTitle } from "@/components/HeroTitle";
 import { HeroCtaRow } from "@/components/HeroCtaRow";
 
 export default async function HomePage() {
-  const [skills, categories, languages] = await Promise.all([
+  const [skills, catalogCategories, languages, totalSkills, categoryCounts] = await Promise.all([
     getSkills(),
     getCategories(),
     getLanguages(),
+    getTotalSkillsCount().catch(() => 0),
+    getCategoryCounts().catch(() => ({} as Record<string, number>)),
   ]);
+
+  // Derive categories from DB counts (all 92k) merged with static catalog
+  const allCategoriesSet = new Set<string>([...catalogCategories, ...Object.keys(categoryCounts)]);
+  const categories = Array.from(allCategoriesSet).sort();
 
   return (
     <div className="min-w-0 w-full space-y-16 md:space-y-20 lg:space-y-24">
@@ -58,6 +65,8 @@ export default async function HomePage() {
             skills={skills}
             categories={categories}
             languages={languages}
+            totalSkills={totalSkills}
+            categoryCounts={categoryCounts}
           />
         </div>
       </section>

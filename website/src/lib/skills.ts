@@ -13,7 +13,7 @@ export async function getSkillsIndex(): Promise<SkillsIndex> {
 async function fetchInstalledSkills(): Promise<Skill[]> {
   try {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${base}/api/search?q=&limit=100`, { cache: "no-store" });
+    const res = await fetch(`${base}/api/search?q=&limit=50`, { cache: "no-store" });
     if (!res.ok) return [];
     const data = (await res.json()) as { skills: Array<{ id: string; name: string; source: string; installs: number; category?: string }> };
     return data.skills.map((s) => ({
@@ -54,10 +54,41 @@ export async function getSkillByPath(path: string): Promise<Skill | null> {
 }
 
 export async function getSkillBySlug(slug: string): Promise<Skill | null> {
+  // 1. Try the pre-loaded static catalog
   const byPath = await getSkillByPath(slug);
   if (byPath) return byPath;
-  const skills = await getSkills();
-  return skills.find((s) => toSkillSlug(s.path) === slug) ?? null;
+  const catalogSkills = sortSkillsWithHotFirst((await getSkillsIndex()).skills);
+  const fromCatalog = catalogSkills.find((s) => toSkillSlug(s.path) === slug);
+  if (fromCatalog) return fromCatalog;
+
+  // 2. Look up directly in Neon by matching name slug
+  try {
+    const { sql } = await import("./db");
+    const rows = (await sql`
+      SELECT id, name, source, install_count, category
+      FROM skills
+      WHERE LOWER(REPLACE(name, ' ', '-')) = ${slug.toLowerCase()}
+      ORDER BY install_count DESC
+      LIMIT 1
+    `) as Array<{ id: string; name: string; source: string; install_count: number; category: string | null }>;
+
+    if (rows.length > 0) {
+      const r = rows[0];
+      return {
+        name: r.name,
+        path: r.name.toLowerCase().replace(/\s+/g, "-"),
+        description: `From ${r.source} (${r.install_count} installs)`,
+        languages: [],
+        category: r.category ?? "community",
+        files: { skill_md: "" },
+        sourceRepo: r.source,
+      };
+    }
+  } catch {
+    // DB unavailable — fall through
+  }
+
+  return null;
 }
 
 export async function getCategories(): Promise<string[]> {

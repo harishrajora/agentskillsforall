@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(wc -l /Users/harishr/Documents/repos/testmu-skills-ui/src/components/*.tsx)",
-      "Bash(wc:*)",
-      "Bash(curl -s http://localhost:3000)"
-    ]
-  }
-}
